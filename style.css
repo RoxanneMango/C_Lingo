@@ -1,0 +1,80 @@
+* {
+	font-family: monospace;
+	background: black;
+	user-select: none;
+	font-size: 1.5vw;
+	color: #cfcfcf;
+}
+.word_container {
+	width: 55vw;
+	margin-bottom: 3%;
+	border-width: 1px;
+	border-style: solid none solid none;
+	border-color: #cfcfcf;
+	padding: 10px;
+}
+ul {
+	width: 50vw;
+	margin: 0;
+	list-style: none;
+	padding: 0;
+	display: block;
+}
+li {
+	display: inline-block;
+	margin: 0.2vw;
+}
+.letter {
+	border: 0;
+	border: 1px solid #000938;
+	padding: 0.5vw;
+	width: 3vw;
+	height: 3vw;
+	background: #082236;
+	font-size: 2vw;
+}
+p {
+	text-align: justify;
+}
+h1 {
+	font-size: 4vw;
+	text-align: center;
+	white-space: nowrap;
+	width: 50%;
+	padding: 20px;
+	border: 3px groove #cfcfcf;
+	margin: auto;
+}
+
+a {
+	text-decoration: none;
+} a:hover {
+	cursor: pointer;
+	color: green;
+}
+.input {
+	width: 25vw;
+	font-size: 2vw;
+	border: 3px groove #cfcfcf;
+	padding: 10px;
+	color: green;
+	text-align: center;
+
+} .input:hover {
+	cursor: text;
+} .input:focus {
+	outline: none;
+}
+.button {
+	width: 25vw;
+	font-size: 2vw;
+	color: #cfcfcf;
+	border: 3px groove #cfcfcf;
+	padding: 10px;
+	margin-bottom: 3%;
+} .button:hover {
+	cursor: pointer;
+	color: green;
+} .button:focus {
+	outline: none;
+}

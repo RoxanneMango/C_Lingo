@@ -1,0 +1,283 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<title>Lingo</title>
+	<meta name="viewport" content="initial-scale=1">
+	
+	<!--
+	<link rel="stylesheet" type="text/css" href="style.css"\>
+	-->
+
+	<style>
+		* {
+			font-family: monospace;
+			background: black;
+			user-select: none;
+			font-size: 1.5vw;
+			color: #cfcfcf;
+		}
+		.word_container {
+			width: 55vw;
+			margin-bottom: 3%;
+			border-width: 1px;
+			border-style: solid none solid none;
+			border-color: #cfcfcf;
+			padding: 1vw;
+		}
+		ul {
+			width: 50vw;
+			margin: 0;
+			list-style: none;
+			padding: 0;
+			display: block;
+		}
+		li {
+			display: inline-block;
+		}
+		.letter {
+			border: 1px solid black;
+			padding: 0.5vw;
+			width: 3vw;
+			height: 3vw;
+			background: #082236;
+			font-size: 2vw;
+		}
+		.letter_correct {
+			border: 1px solid black;
+			padding: 0.5vw;
+			width: 3vw;
+			height: 3vw;
+			background: red;
+			font-size: 2vw;
+		}
+		p {
+			text-align: justify;
+		}
+		h1 {
+			font-size: 4vw;
+			text-align: center;
+			white-space: nowrap;
+			width: 50%;
+			padding: 20px;
+			border: 3px groove #cfcfcf;
+			margin: auto;
+		}
+
+		a {
+			text-decoration: none;
+		} a:hover {
+			cursor: pointer;
+			color: green;
+		}
+		.input {
+			width: 25vw;
+			font-size: 2vw;
+			border: 3px groove #cfcfcf;
+			padding: 10px;
+			color: green;
+			text-align: center;
+		
+		} .input:hover {
+			cursor: text;
+		} .input:focus {
+			outline: none;
+		}
+		.button {
+			width: 25vw;
+			font-size: 2vw;
+			color: #cfcfcf;
+			border: 3px groove #cfcfcf;
+			padding: 10px;
+			margin-bottom: 3%;
+		} .button:hover {
+			cursor: pointer;
+			color: green;
+		} .button:focus {
+			outline: none;
+		}
+		
+	</style>
+	
+</head>
+<body>
+	<div align="center" style="margin:auto;">
+
+		<div class="word_container">
+		
+			<div id="lingo_word">
+				</br></br></br></br></br></br></br></br></br></br></br></br></br></br>
+			</div>
+			
+			<form method="post" id="lingo" action="/lingo" autocomplete="off">
+				</br>
+				<input class="input" id="input" placeholder=". . ." type="text" name="input" value="" maxLength="5" size="5">
+				</br>
+				<input class="button" type="submit" value="Submit" name="submit_guess" style="margin-top: 3%;">
+				</br>
+			</form>
+			
+			<div id="lingo_stats" align="center"></div>
+			
+		</div>
+		
+		<div class="menu">
+			<a href="manual.html" target="_blank"><input class="button" type="submit" value="manual"\></a>
+			</br>
+			<a href="index.html"><input class="button" type="submit" value="quit" onClick = "stopLingo()"\></a>
+		</div>
+		
+	</div>
+	
+	<script>
+		let i = 60;
+		let tries = 5;
+		let interval;
+		
+		window.addEventListener('load', () => init());
+		function init(){
+			let register = document.querySelector("#lingo");
+			register.addEventListener("submit", (event) => submitForm(event));
+			lingo_init();
+			interval = window.setInterval(timer, 1000);
+		}
+
+		function lingo_init(){
+			get_lingoSize();
+			get_lingoBoard();
+			get_lingoStats();
+		}
+
+		function stopLingo(){
+			let data = {"lingo_game" : "quit"}
+			post(data);
+		}
+
+		async function get_lingoStats()
+		{
+			const guesses = await fetch("lingo_guesses_remaining",{method: 'GET'})
+			.then(guesses => guesses.text())
+			.catch(error => console.log(error));
+			tries = parseInt(guesses);
+			
+			const timeSeconds = await fetch("lingo_time_remaining",{method: 'GET'})
+			.then(timeSeconds => timeSeconds.text())
+			.catch(error => console.log(error));
+			
+			i = parseInt(timeSeconds);
+			
+			document.getElementById('lingo_stats').innerHTML="tries remaining: <strong>"+tries+"</strong>	|	Time left: <strong>"+i+"</strong>";
+		}
+		
+		async function get_lingoSize()
+		{
+			let data = "lingo_size";
+			const response = await fetch(data,{method: 'GET'})
+			.then(response => response.text())
+			.then(responseData => {
+			//	console.log(responseData);
+				document.getElementById("input").maxLength = responseData;})
+			.catch(error => console.log(error));
+		}
+	
+		async function get_lingoBoard()
+		{
+			let data = "lingo_board";
+			const response = await fetch(data,{method: 'GET'})
+			.then(response => response.text())
+			.then(responseData => {
+				let lingoResponse = [""];
+				for(i = 0, index = 0; i < responseData.length; i++){
+					if(responseData[i] == ';'){
+						index += 1;}
+					else if(responseData[i] == '='){
+						lingoResponse[index] = responseData[i];
+						index += 1;}
+					else{
+						lingoResponse[index] = responseData[i];}
+				}
+				let lingoBoard = "";
+				for(i = 0; i < lingoResponse.length; i++){
+					if(lingoResponse[i] == '_'){
+						lingoBoard += "<li><div class=\"letter\" style=\"color:rgba(0,0,0,0.0);\">" + lingoResponse[i] + "</div></li>";}
+					else if(lingoResponse[i] == '('){
+						lingoBoard += "<ul>";}
+					else if(lingoResponse[i] == ')'){
+						lingoBoard += "</ul>"}
+					else if(lingoResponse[i] == '='){
+						i += 1;
+						lingoBoard += "<li><div class=\"letter_correct\">" + lingoResponse[i] + "</div></li>";}
+					else{
+						lingoBoard += "<li><div class=\"letter\">" + lingoResponse[i] + "</div></li>";}
+				}
+				document.getElementById("lingo_word").innerHTML = lingoBoard;
+			})
+			.catch(error => console.log(error));
+		}
+
+		async function post(data){
+			const response = await fetch("/lingo",{
+				method: 'POST',body: JSON.stringify(data)})
+			.then(response => response.text())
+			.catch(error => console.log(error));
+		}
+
+		async function submitForm(event){
+			event.preventDefault();
+			let formData = new URLSearchParams(new FormData(document.querySelector('#lingo')));
+			let data = {"lingo_guess" : formData.get("input")}
+
+			if(formData.get("input").length < document.getElementById("input").maxLength){
+				document.getElementById("input").style.background = "#240000";}
+			else{
+				document.getElementById("input").style.background = "black";
+				const response = await fetch("/lingo", {method: 'POST',body: JSON.stringify(data)})
+				.then(response => response.text())
+				.then(responseData => {
+					get_lingoStats();
+					let lingoResponse = [""];
+					for(i = 0, index = 0; i < responseData.length; i++){
+						if(responseData[i] == ';'){
+							index += 1;}
+						else if(responseData[i] == '='){
+							lingoResponse[index] = responseData[i];
+							index += 1;}
+						else{
+							lingoResponse[index] = responseData[i];}
+					}
+					let lingoBoard = "";
+					for(i = 0; i < lingoResponse.length; i++){
+						if(lingoResponse[i] == '_'){
+							lingoBoard += "<li><div class=\"letter\" style=\"color:rgba(0,0,0,0.0);\">" + lingoResponse[i] + "</div></li>";}
+						else if(lingoResponse[i] == '('){
+							lingoBoard += "<ul>";}
+						else if(lingoResponse[i] == ')'){
+							lingoBoard += "</ul>"}
+						else if(lingoResponse[i] == '='){
+							i += 1;
+							lingoBoard += "<li><div class=\"letter_correct\">" + lingoResponse[i] + "</div></li>";}
+						else{
+							lingoBoard += "<li><div class=\"letter\">" + lingoResponse[i] + "</div></li>";}
+					}
+					console.log(lingoBoard);
+					document.getElementById("lingo_word").innerHTML = lingoBoard;
+				})
+				.catch(error => console.log(error));
+				document.getElementById("lingo").reset();
+			}
+		}
+		
+		function timer(){
+			let statsDiv = document.querySelector("#lingo_stats");
+			statsDiv.innerHTML="tries remaining: <strong>"+tries+"</strong>	|	Time left: <strong>"+i+"</strong>";
+			i -= 1;
+			if(i < 0){
+				i = 59;
+				get_lingoStats();}
+			if(tries <= 0){
+				clearInterval(interval);
+				statsDiv.innerHTML = "Game Over"}
+		}
+	</script>
+
+</body>
+</html>
