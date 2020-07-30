@@ -30,11 +30,13 @@ typedef struct Lingo
 {
 	char * word;
 	int wordSize;
+	int numberOfGuesses;
 	int guessesRemaining;
 	bool isRunning;
 	
 	int score;
 	bool isWon;
+	bool killSignal;
 	
 	char ** guesses;
 	int index;

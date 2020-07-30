@@ -15,16 +15,8 @@ main(int argc, char ** argv)
 
 	/* LINGO */
 
-
 	/* initialize variables */
-	Lingo lingo =
-	{
-		.word = "hello",	/* Get word from LingoWords */
-		.wordSize = 5,
-		.guessesRemaining = 5,
-		.isRunning = false,
-		.isWon = false,
-	};
+	Lingo lingo;
 	
 	/* SERVER */
 	
@@ -37,16 +29,12 @@ main(int argc, char ** argv)
 	
 	uint8_t buff[MAXLINE];
 	uint8_t recvline[MAXLINE];
-	
 	char * message = calloc(MAXLINE, sizeof(char));
 	
 	int connfd;
-	
 	char * client_address = NULL;
 	struct sockaddr_in addr;
-	
-	char * guess = calloc( lingo.guessesRemaining, sizeof(char) );
-	
+
 	Param param =
 	{
 		.key = calloc(15, sizeof(char)),
@@ -55,8 +43,6 @@ main(int argc, char ** argv)
 	
 	for(;;)
 	{
-		lingo.mutex_free = false;
-		
 		/* reset buffers */
 		memset(recvline, 0, MAXLINE);
 		memset(buff, 0, MAXLINE);
@@ -95,12 +81,7 @@ main(int argc, char ** argv)
 		snprintf( (char *)buff, sizeof(buff), "HTTP/1.0 200 OK\r\n\r\n%s", message);
 		write(connfd, (char *)buff, strlen((char *)buff));
 		close(connfd);
-		
-		lingo.mutex_free = true;
-		//printf("\nConnection closed\n"); fflush(stdout);
 	}
-	
-	free(guess);
 	free(message);
 	
 	return 0;

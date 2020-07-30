@@ -90,4 +90,8 @@ getPage(char * request, char * message)
 		//strcpy(header, "Content-Type: text/css");
 		getFileContent("style.css", message);
 	}
+	else if(strncmp(request, "GET /lingo.js", 12) == 0)
+	{
+		getFileContent("lingo.js", message);
+	}
 }
