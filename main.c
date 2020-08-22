@@ -16,7 +16,7 @@ main(int argc, char ** argv)
 	/* LINGO */
 
 	/* initialize variables */
-	Lingo lingo;
+	Lingo lingo = { .wordSize = 5 };
 	
 	/* SERVER */
 	
@@ -50,6 +50,7 @@ main(int argc, char ** argv)
 		
 		//printf("\nWaiting for connection\n"); fflush(stdout);
 		connect_client(&connfd, &listenfd, addr, recvline, client_address);
+		lingo.connfd = connfd;
 		
 		switch(checkRequestType((char *)recvline))
 		{
@@ -79,7 +80,7 @@ main(int argc, char ** argv)
 		}
 		
 		snprintf( (char *)buff, sizeof(buff), "HTTP/1.0 200 OK\r\n\r\n%s", message);
-		write(connfd, (char *)buff, strlen((char *)buff));
+		write_socket(connfd, (char *)buff);
 		close(connfd);
 	}
 	free(message);

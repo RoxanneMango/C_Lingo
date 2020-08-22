@@ -1,15 +1,14 @@
 #include "lingo.h"
 
 bool
-letterExists(char guess, char * word, int wordSize, bool * possibleLetters)
+letterIsPresent(unsigned int dictionary[][2], int wordSize, char letter)
 {
 	for(int i = 0; i < wordSize; ++i)
 	{
-		if(guess == word[i])
+		if(dictionary[i][0] == letter)
 		{
-			if(possibleLetters[i])
+			if(dictionary[i][1] > 0)
 			{
-				possibleLetters[i] = false;
 				return true;
 			}
 		}
@@ -19,34 +18,82 @@ letterExists(char guess, char * word, int wordSize, bool * possibleLetters)
 
 void
 buildLetterFlags(char * guess, char * word, int wordSize, char * message)
-{
-	bool * possibleLetters = calloc(wordSize, sizeof(bool));
+{	
+	// init //
+	char answer[wordSize][2];
 	for(int i = 0; i < wordSize; ++i)
 	{
-		possibleLetters[i] = true;
+		answer[i][0] = '!';answer[i][1] = guess[i];
 	}
-
-	char letter[1];
-	for(int j = 0; j < wordSize; ++j)
+	unsigned int dictionary[wordSize][2];
+	for(int i = 0; i < wordSize; ++i)
 	{
-		letter[0] = guess[j];
-		if(guess[j] == word[j])
-		{
-			strcat(message, "=");
-		}
-		else if(letterExists(guess[j], word, wordSize, possibleLetters))
-		{
-			strcat(message, "?");
-		}
-		else
-		{
-			strcat(message, "!");
-		}
-		strcat(message, letter);
+		dictionary[i][0] = '_';dictionary[i][1] = 0;
 	}
-	free(possibleLetters);
-}
+	
+	// Populate //
+	for(int i = 0, x = 0; i < wordSize; ++i)
+	{
+		if(letterIsPresent(dictionary, wordSize, guess[i]))
+		{
+			continue;
+		}
+		for(int j = 0; j < wordSize; ++j)
+		{
+			if(guess[i] == word[j])
+			{
+				dictionary[x][0] = guess[i];
+				dictionary[x][1] += 1;
+			}
+		}
+		x += 1;
+	}
+	
+	// Check guess with dictionary and if found, remove entry
+	for(int i = 0; i < wordSize; ++i)
+	{
+		if(guess[i] == word[i])
+		{
+			answer[i][0] = '=';
+			
+			// Remove dictionary entry
+			for(int j = 0; j < wordSize; ++j)
+			{
+				if(guess[i] == dictionary[j][0])
+				{
+					dictionary[j][1] -= 1;
+					break;
+				}
+			}
+		}
+	}
 
+	for(int i = 0; i < wordSize; ++i)
+	{
+		if(letterIsPresent(dictionary, wordSize, guess[i]))
+		{
+			if(!(guess[i] == word[i]))
+			{
+				answer[i][0] = '?';
+				// Remove dictionary entry
+				for(int j = 0; j < wordSize; ++j)
+				{
+					if(guess[i] == dictionary[j][0])
+					{
+						dictionary[j][1] -= 1;
+						break;
+					}
+				}	
+			}
+		}
+	}
+
+	printf("Answer: %s\n", *answer); fflush(stdout);
+	
+	strcat(message, "(");
+	strcat(message, *answer);
+	strcat(message, ")");
+}
 
 void
 buildLingoPage(struct Lingo * lingo, char * message)
@@ -199,7 +246,12 @@ lingo_game(void * void_lingo)
 	struct Lingo * lingo = void_lingo;
 	printf("STARTING LINGO . . .\n");
 	for(;;)
-	{	
+	{
+		//char buff[100] = {0};
+		//snprintf(buff, sizeof(buff), "HTTP/1.0 200 OK\r\n\r\ntesttest");
+		//snprintf(buff, sizeof(buff), "testtest");
+		//write_socket(lingo->connfd, buff);
+		
 		if(strcmp(lingo->word, lingo->guesses[lingo->index]) == 0)
 		{
 			lingo->isWon = true;
@@ -325,6 +377,17 @@ getLingoVariable(char * request, struct Lingo * lingo, char * message)
 	else if(strncmp(request, "GET /lingo_is_running", 21) == 0)
 	{
 		if(lingo->isRunning && !lingo->killSignal)
+		{
+			strcpy(message, "1");
+		}
+		else
+		{
+			strcpy(message, "0");
+		}
+	}
+	else if(strncmp(request, "GET /lingo_is_won", 17) == 0)
+	{
+		if(lingo->isWon)
 		{
 			strcpy(message, "1");
 		}

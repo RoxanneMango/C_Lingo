@@ -18,4 +18,6 @@ void * server(void * void_lingo);
 void create_socket(int * listenfd, struct sockaddr_in servaddr, char * ip_address, int server_port);
 void connect_client(int * connfd, int * listenfd, struct sockaddr_in addr, uint8_t * recvline, char * client_address);
 
+void write_socket(int connfd, char * buffer);
+
 #endif // SERVER_H

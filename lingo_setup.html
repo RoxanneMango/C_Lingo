@@ -68,14 +68,28 @@ a {
 				</br>
 			</div>
 		</div>
-		<a href="lingo.html">
-			<input class="button" type="submit" value="start" onClick = "startLingo()" disabled\>
-		</a>
+			<input id="start_lingo" class="button" type="submit" value="start" onClick ="startLingo()"\>
 		</br>
 		<a href="index.html">
 			<input class="button" type="submit" value="quit"\>
 		</a>
 	</div>
 	<script type="text/javascript" src="lingo.js"></script>
+	<script>
+		window.addEventListener('load', () => init());
+		
+		function redirect(){
+			lingo_init();
+			window.location.href = "lingo.html";
+		}
+		
+		async function init(){
+			document.getElementById("start_lingo").addEventListener("click", redirect);
+			
+			//const response = await fetch("lingo.html",{method: 'GET'})
+			//.then(response => response.text())
+			//.catch(error => console.log(error));
+		}
+	</script>
 </body>
 </html>

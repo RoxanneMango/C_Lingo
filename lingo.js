@@ -1,13 +1,16 @@
-let i = 60;
-let tries = 5;
-let interval;
-let isRunning;
-let isWon = false;
+let i = 0;
+let tries = 0;
+let interval = 0;
+let isRunning = 0;
+let isWon = 0;
 
-function lingo_init(){
-	get_lingoSize();
-	get_lingoBoard();
-	get_lingoStats();
+async function lingo_init(){
+	await get_lingoSize();
+	await get_lingoBoard();
+	await get_lingoTime();
+	await get_lingoGuessesRemaining();
+	await get_lingoIsWon();
+	isRunning = true;
 }
 
 function startLingo(data){post({"lingo_game":"start"})}
@@ -56,24 +59,41 @@ async function get_lingoBoard(){
 	.catch(error => console.log(error));
 }
 
-async function get_lingoStats()
-{
-	const guesses = await fetch("lingo_guesses_remaining",{method: 'GET'})
-	.then(guesses => guesses.text())
-	.catch(error => console.log(error));
-	tries = parseInt(guesses);
-	
+async function get_lingoTime(){
 	const timeSeconds = await fetch("lingo_time_remaining",{method: 'GET'})
 	.then(timeSeconds => timeSeconds.text())
 	.catch(error => console.log(error));
-	i = parseInt(timeSeconds-1);
-	
+	i = parseInt(timeSeconds);
+}
+
+async function get_lingoIsRunning(){
 	const runningStatus = await fetch("lingo_is_running",{method: 'GET'})
 	.then(runningStatus => runningStatus.text())
 	.catch(error => console.log(error));
-	
 	isRunning = parseInt(runningStatus);
-	
+}
+
+async function get_lingoGuessesRemaining(){
+	const guesses = await fetch("lingo_guesses_remaining",{method: 'GET'})
+	.then(guesses => guesses.text())
+	.catch(error => console.log(error));
+	tries = parseInt(guesses);	
+}
+
+async function get_lingoIsWon(){
+	const winStatus = await fetch("lingo_is_won", {method: 'GET'})
+	.then(winStatus => winStatus.text())
+	.catch(error => console.log(error));
+	isWon = parseInt(winStatus);
+	if(isWon){isRunning = false;}
+}
+
+async function get_lingoStats(){
+	if(!i){
+		await get_lingoTime();
+	}else{i>0 ? --i : 0;}
+	if((i <= 0) || (tries <= 0)){
+		get_lingoIsRunning(); }
 	if(isRunning){
 		document.getElementById('lingo_stats').innerHTML="tries remaining: <strong>"+tries+"</strong>	|	Time left: <strong>"+i+"</strong>";}
 	else{
@@ -89,18 +109,16 @@ async function submitForm(event){
 	let formData = new URLSearchParams(new FormData(document.querySelector('#lingo')));
 	let data = {"lingo_guess" : formData.get("input")}
 
-	get_lingoStats();
-
 	if(((formData.get("input").length < document.getElementById("input").maxLength)) || (!isRunning)){
 		document.getElementById("input").style.background = "#240000";}
 	else{
-		let correctLetters = 0;
+		//let correctLetters = 0;
 		document.getElementById("input").style.background = "black";
 		const response = await fetch("/lingo", {method: 'POST',body: JSON.stringify(data)})
 		.then(response => response.text())
 		.then(responseData => {
 			let lingoBoard = "";
-			for(i = 0; i < responseData.length; ++i){
+			for(let i = 0; i < responseData.length; ++i){
 				if(responseData[i] == '('){
 					lingoBoard += "<ul>";}
 				else if(responseData[i] == ')'){
@@ -109,30 +127,27 @@ async function submitForm(event){
 					if(responseData[i] == '_'){
 						lingoBoard += "<li><div class=\"letter letter_default letter_pending\">" + responseData[i] + "</div></li>";}	
 					else if(responseData[i] == '='){
-						correctLetters += 1;
 						lingoBoard += "<li><div class=\"letter letter_correct\">";}
 					else if(responseData[i] == '?'){
 						lingoBoard += "<li><div class=\"letter letter_wrong_place\">";}
 					else if(responseData[i] == '!'){
 						lingoBoard += "<li><div class=\"letter letter_default\">";}
 					else{
-						lingoBoard += responseData[i] + "</div></li>";
-					}
+						lingoBoard += responseData[i] + "</div></li>";}
 				}
 			}
 			document.getElementById("lingo_word").innerHTML = lingoBoard;
 		})
 		.catch(error => console.log(error));
-		console.log(correctLetters);
-		if(correctLetters >= document.getElementById("input").maxLength)
-		{
-			isWon = true;
-		}
+		await get_lingoIsWon();
+		await get_lingoGuessesRemaining();
+		await get_lingoTime();
+		i-=1;
 		document.getElementById("lingo").reset();
 	}
 }
-function timer(){
-	get_lingoStats();
+async function timer(){
+	await get_lingoStats();
 	if(!isRunning){
 		clearInterval(interval);}
 }

@@ -130,3 +130,9 @@ connect_client(int * connfd, int * listenfd, struct sockaddr_in addr, uint8_t * 
 		err_n_die("Read error.");
 	}
 }
+
+void
+write_socket(int connfd, char * buffer)
+{
+	write(connfd, (char *)buffer, strlen((char *)buffer));
+}

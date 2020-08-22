@@ -1,6 +1,7 @@
 #ifndef LINGO_H
 #define LINGO_H
 
+#include "server.h"
 #include "param.h"
 
 #include <string.h>
@@ -52,6 +53,8 @@ typedef struct Lingo
 	pthread_t thread;
 	bool mutex_free;
 	
+	int connfd;
+	
 } Lingo;
 
 void buildLingoPage(struct Lingo * lingo, char * message);
@@ -59,8 +62,7 @@ void buildLetter(char * letter, char * message);
 void buildWord(char * word, int wordSize, char * message);
 void buildBlankWord(int wordSize, char * message);
 
-
-bool letterExists(char guess, char * word, int wordSize, bool * possibleLetters);
+bool letterIsPresent(unsigned int dictionary[][2], int wordSize, char letter);
 void buildLetterFlags(char * guess, char * word, int wordSize, char * message);
 
 void getLingoVariable(char * request, struct Lingo * lingo, char * message);
