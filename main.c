@@ -1,4 +1,5 @@
 #include "server.h"
+#include "lingo.h"
 
 // TESTS:
 /*
@@ -8,18 +9,13 @@
 
 */
 
-
 int
 main(int argc, char ** argv)
 {
-
 	/* LINGO */
-
-	/* initialize variables */
 	Lingo lingo = { .wordSize = 5 };
 	
 	/* SERVER */
-	
 	int listenfd;
 	struct sockaddr_in servaddr;
 	char * ip_address = SERVER_IP;
@@ -78,12 +74,10 @@ main(int argc, char ** argv)
 				break;
 			}
 		}
-		
 		snprintf( (char *)buff, sizeof(buff), "HTTP/1.0 200 OK\r\n\r\n%s", message);
 		write_socket(connfd, (char *)buff);
 		close(connfd);
 	}
-	free(message);
-	
+	free(message);	
 	return 0;
 }

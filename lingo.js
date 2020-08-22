@@ -2,20 +2,25 @@ let i = 0;
 let tries = 0;
 let interval = 0;
 let isRunning = 0;
-let isWon = 0;
+let isWon = false;
+let score = 0;
+let isReady = true;
 
 async function lingo_init(){
+	console.log("INIT!");
 	await get_lingoSize();
 	await get_lingoBoard();
 	await get_lingoTime();
 	await get_lingoGuessesRemaining();
-	await get_lingoIsWon();
+	isWon = false;
+	isReady = true;
 	isRunning = true;
 }
 
 function startLingo(data){post({"lingo_game":"start"})}
 function stopLingo(){post({"lingo_game":"quit"});}
 function setLingoSize(data){post({"lingo_size":data});}
+function lingo_isWonAck(){post({"lingo_is_won_ack":"ack"});}
 
 async function post(data){
 	const response = await fetch("/lingo",{method: 'POST',body: JSON.stringify(data)})
@@ -85,7 +90,6 @@ async function get_lingoIsWon(){
 	.then(winStatus => winStatus.text())
 	.catch(error => console.log(error));
 	isWon = parseInt(winStatus);
-	if(isWon){isRunning = false;}
 }
 
 async function get_lingoStats(){
@@ -139,15 +143,44 @@ async function submitForm(event){
 			document.getElementById("lingo_word").innerHTML = lingoBoard;
 		})
 		.catch(error => console.log(error));
+		document.getElementById("lingo").reset();
 		await get_lingoIsWon();
+		if(isWon)
+		{
+			isReady = false;
+			lingo_isWonAck();		
+		}
+		if(!isReady)
+		{
+			get_lingoIsWon();
+			if(!isWon)
+			{
+				lingo_init();
+			}					
+		}
 		await get_lingoGuessesRemaining();
 		await get_lingoTime();
-		i-=1;
-		document.getElementById("lingo").reset();
 	}
 }
 async function timer(){
-	await get_lingoStats();
+	if(isWon)
+	{
+		isReady = false;
+		lingo_isWonAck();
+	}
+	if(!isReady)
+	{
+		get_lingoIsWon();
+		if(!isWon)
+		{
+			lingo_init();
+		}		
+	}
+	else
+	{
+		await get_lingoStats();	
+	}
+	
 	if(!isRunning){
 		clearInterval(interval);}
 }

@@ -35,7 +35,7 @@ printParams(char * recvline)
 bool
 is_letter(char letter)
 {
-	return ( ( (letter < LOWER_LETTER_A) || (letter > LOWER_LETTER_Z) ) ? false : true );
+	return ( ( (tolower(letter) < LOWER_LETTER_A) || (tolower(letter) > LOWER_LETTER_Z) ) ? false : true );
 }
 
 bool

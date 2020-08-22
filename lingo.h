@@ -53,27 +53,24 @@ typedef struct Lingo
 	pthread_t thread;
 	bool mutex_free;
 	
+	bool isWonAck;
+	
 	int connfd;
 	
 } Lingo;
 
-void buildLingoPage(struct Lingo * lingo, char * message);
-void buildLetter(char * letter, char * message);
-void buildWord(char * word, int wordSize, char * message);
-void buildBlankWord(int wordSize, char * message);
-
-bool letterIsPresent(unsigned int dictionary[][2], int wordSize, char letter);
-void buildLetterFlags(char * guess, char * word, int wordSize, char * message);
-
-void getLingoVariable(char * request, struct Lingo * lingo, char * message);
-
-void getRandomWord(char * word, int size);
+void * lingo_game(void * void_lingo);
 
 void lingo_start(struct Lingo * lingo);
-void * lingo_game(void * void_lingo);
 void lingo_stop(struct Lingo * lingo);
 
 void lingo_input(struct Lingo * lingo, Param * param);
+void getLingoVariable(char * request, struct Lingo * lingo, char * message);
+void getRandomWord(char * word, int size);
+
+bool letterIsPresent(unsigned int dictionary[][2], int wordSize, char letter);
+void buildLetterFlags(char * guess, char * word, int wordSize, char * message);
+void buildLingoPage(struct Lingo * lingo, char * message);
 
 #endif // LINGO_H
 
