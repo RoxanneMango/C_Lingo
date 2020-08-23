@@ -1,31 +1,53 @@
 #include "lingo.h"
 
 void
-getRandomWord(char * word, int size)
-{
-	switch(size)
+getRandomWord(char * word, int size, char * file_name)
+{	
+	// Initialize random number generator
+	srand((unsigned) time(0));
+	int max = getFileSize(file_name) / (size+1);
+	int random_number = rand() % max;
+	
+	printf("random_number = %d\n", random_number); fflush(stdout);
+	
+	char random_word[7] = {0};
+
+	int i = 0;
+	char c[1] = {0};
+	bool chosen_word = false;
+	
+	FILE * FP = fopen(file_name, "r");
+	
+	while ((c[0] = fgetc(FP)) != EOF)
 	{
-		case 5:
+		if(is_letter(c[0]) && chosen_word)
 		{
-			strcpy(word, "hello");
-			break;
+			strncat(random_word, c, 1);
 		}
-		case 6:
+		else if(c[0] == ';')
 		{
-			strcpy(word, "police");
-			break;
-		}
-		case 7:
-		{
-			strcpy(word, "website");
-			break;
+			if(chosen_word)
+			{
+				break;
+			}
+			i += 1;
+			if(i == random_number)
+			{
+				chosen_word = true;
+			}
 		}
 	}
+	fclose(FP);
+	printf("random_word = %s\n", random_word);
+	fflush(stdout);
+	strncpy(word, random_word, size);
 }
 
 void
 lingo_start(struct Lingo * lingo)
 {	
+	lingo->mutex_free = false;
+	
 	lingo->isLost = false;
 	lingo->lostCountDown = NAME_TIME;
 	lingo->name = calloc(16, sizeof(char));
@@ -43,7 +65,7 @@ lingo_start(struct Lingo * lingo)
 	lingo->wordSize = 5;
 	
 	lingo->word = calloc(lingo->wordSize, sizeof(char));
-	getRandomWord(lingo->word, lingo->wordSize);
+	getRandomWord(lingo->word, lingo->wordSize, FIVE_LETTER_WORD_FILE);
 	
 	lingo->hintSize = 1;
 	lingo->hints = calloc(lingo->wordSize, sizeof(char));
@@ -80,6 +102,8 @@ lingo_start(struct Lingo * lingo)
 void
 lingo_restart(struct Lingo * lingo)
 {
+	lingo->mutex_free = false;
+	
 	lingo->index = 0;
 	lingo->guessesRemaining = lingo->numberOfGuesses;
 	
@@ -97,7 +121,25 @@ lingo_restart(struct Lingo * lingo)
 	}
 	
 	lingo->word = realloc(lingo->word, lingo->wordSize * sizeof(char));
-	getRandomWord(lingo->word, lingo->wordSize);
+
+	switch(lingo->wordSize)
+	{
+		case 5:
+		{
+			getRandomWord(lingo->word, lingo->wordSize, FIVE_LETTER_WORD_FILE);
+			break;
+		}
+		case 6:
+		{
+			getRandomWord(lingo->word, lingo->wordSize, SIX_LETTER_WORD_FILE);
+			break;
+		}
+		case 7:
+		{
+			getRandomWord(lingo->word, lingo->wordSize, SEVEN_LETTER_WORD_FILE);
+			break;
+		}
+	}
 	
 	lingo->hintSize = 1;
 	lingo->hints = realloc(lingo->hints, lingo->wordSize * sizeof(char));

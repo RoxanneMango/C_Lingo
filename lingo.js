@@ -15,10 +15,7 @@ async function lingo_init(){
 	await get_lingoIsLost();
 	await get_lingoIsWon();
 	await get_lingoIsRunning();
-//	isWon = false;
 	isReady = true;
-//	isRunning = true;
-//	isLost = false;
 }
 
 function startLingo(data){post({"lingo_game":"start"})}
@@ -44,8 +41,7 @@ async function get_lingoScore(){
 	const response = await fetch("lingo_score",{method: 'GET'})
 	.then(response => response.text())
 	.catch(error => console.log(error));
-	score = parseInt(response);
-	console.log("score : " + score + "\n");}
+	score = parseInt(response);}
 
 async function get_lingoIsLost(){
 	const response = await fetch("lingo_is_lost",{method: 'GET'})
@@ -101,11 +97,8 @@ async function get_lingo_high_scores(){
 	let y = 8;
 	let isName = true;
 	
-	console.log("length : " + split_response.length + "\n");
-	
 	for(let i = 0; i < split_response.length; ++i)
 	{
-		console.log("length[i] : " + split_response[i].length + "\n");
 		for(let j = 0; j < split_response[i].length; ++j)
 		{
 			if(isName){x -= 1;}
@@ -177,7 +170,7 @@ async function get_lingoStats(){
 				document.getElementById("input").maxLength = 14;
 				document.getElementById("lingo").addEventListener("submit", submitHighScore, true);
 				
-				document.getElementById("lingo_word").innerHTML = "<h1>final score: "+score+"</br>Enter Name:</h1>";
+				document.getElementById("lingo_word").innerHTML = "<h2>final score: "+score+"</br>Enter Name</h2>";
 			}
 			else
 			{
@@ -219,7 +212,6 @@ async function submitForm(event){
 	if(((formData.get("input").length < document.getElementById("input").maxLength)) || (isLost) || !(isRunning)){
 		document.getElementById("input").style.background = "#240000";}
 	else{
-		//let correctLetters = 0;
 		document.getElementById("input").style.background = "black";
 		const response = await fetch("/lingo", {method: 'POST',body: JSON.stringify(data)})
 		.then(response => response.text())

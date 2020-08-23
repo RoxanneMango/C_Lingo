@@ -53,14 +53,14 @@ main(int argc, char ** argv)
 		{
 			case GET:
 			{
-				printRequestFirstLine((char *)recvline); printf("\n"); fflush(stdout);
+				//printRequestFirstLine((char *)recvline); printf("\n"); fflush(stdout);
 				getPage((char *)recvline, message);
 				getLingoVariable((char *)recvline, &lingo, message);
 				break;
 			}
 			case POST:
 			{
-				printParams((char *)recvline); fflush(stdout);
+				//printParams((char *)recvline); fflush(stdout);
 				if((get_key_and_value((char *)recvline, &param) < 0))
 				{
 					printf("Invalid { key : value } pair!\n");

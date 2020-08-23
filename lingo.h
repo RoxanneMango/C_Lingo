@@ -30,6 +30,10 @@
 #define GUESS_TIME 15
 #define NAME_TIME 60
 
+#define FIVE_LETTER_WORD_FILE "lingoWords/five_letter_words.txt"
+#define SIX_LETTER_WORD_FILE "lingoWords/six_letter_words.txt"
+#define SEVEN_LETTER_WORD_FILE "lingoWords/seven_letter_words.txt"
+
 typedef struct Lingo
 {
 	char * word;
@@ -71,7 +75,7 @@ void lingo_stop(struct Lingo * lingo);
 
 void lingo_input(struct Lingo * lingo, Param * param);
 void getLingoVariable(char * request, struct Lingo * lingo, char * message);
-void getRandomWord(char * word, int size);
+void getRandomWord(char * word, int size, char * file_name);
 
 bool letterIsPresent(unsigned int dictionary[][2], int wordSize, char letter);
 void buildLetterFlags(char * guess, char * word, int wordSize, char * message);
