@@ -6,8 +6,7 @@
 #include "param.h"
 #include "file_io.h"
 
-#define SERVER_IP "127.0.0.1"
-//#define SERVER_IP "192.168.1.9"
+#define SERVER_IP "192.168.1.9"
 #define LOCALHOST "127.0.0.1"
 #define SERVER_PORT 44900
 
