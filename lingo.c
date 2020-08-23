@@ -26,6 +26,16 @@ getRandomWord(char * word, int size)
 void
 lingo_start(struct Lingo * lingo)
 {	
+	lingo->isLost = false;
+	lingo->lostCountDown = NAME_TIME;
+	lingo->name = calloc(16, sizeof(char));
+	for(int i = 0; i < 16; ++i)
+	{
+		lingo->name[i] = '.';
+	}
+	
+	lingo->score = 0;
+	
 	lingo->index = 0;
 	lingo->numberOfGuesses = 5;
 	lingo->guessesRemaining = lingo->numberOfGuesses;
@@ -38,7 +48,7 @@ lingo_start(struct Lingo * lingo)
 	lingo->hintSize = 1;
 	lingo->hints = calloc(lingo->wordSize, sizeof(char));
 	
-	printf("Random word: %s\n", lingo->word);
+	//printf("Random word: %s\n", lingo->word);
 	
 	/* Allocating the guesses */
 	lingo->guesses = (char **) calloc(lingo->numberOfGuesses, sizeof(char *));
@@ -60,7 +70,7 @@ lingo_start(struct Lingo * lingo)
 	lingo->isRunning = true;
 	lingo->killSignal = false;
 	
-	lingo->guessTime = 15;	
+	lingo->guessTime = GUESS_TIME;
 	lingo->startTime = time(0);
 	lingo->endTime = lingo->startTime + lingo->guessTime;
 	
@@ -72,10 +82,6 @@ lingo_restart(struct Lingo * lingo)
 {
 	lingo->index = 0;
 	lingo->guessesRemaining = lingo->numberOfGuesses;
-	
-	// lingo->wordSize = lingo->wordSize < 7 ? ++lingo->wordSize : 5;
-	
-	printf("Word Size 1: %d", lingo->wordSize);
 	
 	if(lingo->wordSize == 5)
 	{
@@ -89,19 +95,6 @@ lingo_restart(struct Lingo * lingo)
 	{
 		lingo->wordSize = 5;
 	}
-	printf("Word Size 2: %d", lingo->wordSize);
-	
-	
-	/*
-	if(lingo->wordSize < 7)
-	{
-		lingo->wordSize += 1;
-	}
-	else
-	{
-		lingo->wordSize =  5;
-	}
-	*/
 	
 	lingo->word = realloc(lingo->word, lingo->wordSize * sizeof(char));
 	getRandomWord(lingo->word, lingo->wordSize);
@@ -109,10 +102,8 @@ lingo_restart(struct Lingo * lingo)
 	lingo->hintSize = 1;
 	lingo->hints = realloc(lingo->hints, lingo->wordSize * sizeof(char));
 	
-	printf("Random word: %s\n", lingo->word);
+	//printf("Random word: %s\n", lingo->word);
 	
-	/* Allocating the guesses */
-	//lingo->guesses = (char **) calloc(lingo->numberOfGuesses, sizeof(char *));
 	for(int i = 0; i < lingo->numberOfGuesses; ++i)
 	{
 		lingo->guesses[i] = (char *) realloc(lingo->guesses[i], lingo->wordSize * sizeof(char *));
@@ -141,29 +132,40 @@ lingo_game(void * void_lingo)
 	printf("STARTING LINGO . . .\n");
 	for(;;)
 	{	
+		// Clamp index value so it doesn't go out of range //
+		if(lingo->index > lingo->numberOfGuesses-1)
+		{
+			lingo->index = lingo->numberOfGuesses-1;
+		}
 		// String lacks null termination character, hence why strncmp instead of strcmp //
 		if(strncmp(lingo->word, lingo->guesses[lingo->index], lingo->wordSize) == 0)
 		{
 			lingo->isWon = true;
+			lingo->score += (10 * lingo->guessesRemaining);
 		}
-
 		if(lingo->guessed)
 		{
+			if(lingo->guesses[lingo->index][0] != lingo->word[0])
+			{
+				lingo->isLost = true;
+			}
 			lingo->guessed = false;
 			lingo->guessesRemaining -= 1;
 			lingo->index += 1;
 			lingo->startTime = time(0);
 			lingo->endTime = lingo->startTime + lingo->guessTime;
 		}
-
-		if(!lingo->guessesRemaining)
+		if((!lingo->guessesRemaining) || (time(0) >= lingo->endTime))
 		{
-			lingo->killSignal = true;
+			lingo->isLost = true;
 		}
-
-		if(time(0) >= lingo->endTime)
+		
+		if(lingo->isLost)
 		{
-			lingo->killSignal = true;
+			if(!lingo->lostCountDown)
+			{
+				lingo->killSignal = true;
+			}
 		}
 
 		if(lingo->isWonAck)
@@ -171,37 +173,39 @@ lingo_game(void * void_lingo)
 			lingo_restart(lingo);
 		}
 		
-		lingo->mutex_free = true;
-		
 		if(lingo->killSignal)
 		{
-			printf("DEALLOCATING IN 3 SECONDS . . .\n");
-			sleep(3);
 			lingo_stop(lingo);
 		}
 		if(!lingo->isRunning)
 		{
 			return NULL;
 		}
-		sleep(0.5);
+		lingo->mutex_free = true;
+		sleep(1);
 	}
 }
 
 void
 lingo_stop(struct Lingo * lingo)
-{
-	lingo->isRunning = false;
+{	
 	for(int i = 0; i < lingo->numberOfGuesses; ++i)
 	{
 		free(lingo->guesses[i]);
 	}
 	free(lingo->guesses);
+	free(lingo->name);
+	free(lingo->word);
+	free(lingo->hints);
+	
+	lingo->isRunning = false;
 	printf("EXITING LINGO . . .\n");
 }
 
 void
 lingo_input(struct Lingo * lingo, Param * param)
 {
+	lingo->mutex_free = false;
 	if(!strcmp(param->key, "lingo_game"))
 	{
 		if(!strcmp(param->value, "start"))
@@ -219,6 +223,19 @@ lingo_input(struct Lingo * lingo, Param * param)
 			}
 		}
 	}
+	if(!strcmp(param->key, "lingo_add_name"))
+	{
+		if(lingo->isRunning && !lingo->killSignal && lingo->isLost)
+		{
+			if(!strcmp(param->value, ""))
+			{
+				return;
+			}
+			strncpy(lingo->name, param->value, 14);
+			add_score(HIGH_SCORE, lingo->name, lingo->score);
+			lingo->killSignal = true;
+		}
+	}
 	if(!strcmp(param->key, "lingo_is_won_ack"))
 	{
 		if(lingo->isRunning && lingo->isWon)
@@ -232,7 +249,7 @@ lingo_input(struct Lingo * lingo, Param * param)
 	
 	if(!strcmp(param->key, "lingo_size"))
 	{
-		if(!lingo->isRunning)
+		if(lingo->isRunning)
 		{
 			if(!strcmp(param->value, "five"))
 			{
@@ -250,7 +267,7 @@ lingo_input(struct Lingo * lingo, Param * param)
 	}
 	if(!strcmp(param->key, "lingo_guess"))
 	{
-		if(lingo->isRunning && !lingo->killSignal)
+		if(lingo->isRunning && !lingo->killSignal && !lingo->isLost)
 		{
 			if(isValid(param->value, lingo->wordSize))
 			{
@@ -291,9 +308,27 @@ getLingoVariable(char * request, struct Lingo * lingo, char * message)
 			strcpy(message, "0");
 		}
 	}
+	else if(strncmp(request, "GET /lingo_is_lost", 18) == 0)
+	{
+		if(lingo->isLost)
+		{
+			strcpy(message, "1");
+		}
+		else
+		{
+			strcpy(message, "0");
+		}
+	}
+	else if(strncmp(request, "GET /lingo_score", 16) == 0)
+	{
+		sprintf(message, "%d", lingo->score);
+	}
+	else if(strncmp(request, "GET /lingo_high_scores", 22) == 0)
+	{
+		getFileContent(HIGH_SCORE, message);
+	}
 	else if(strncmp(request, "GET /lingo_is_won", 17) == 0)
 	{
-		printf("isWon : %d\n", lingo->isWon);
 		if(lingo->isWon)
 		{
 			strcpy(message, "1");
@@ -404,17 +439,18 @@ buildLetterFlags(char * guess, char * word, int wordSize, char * message)
 			}
 		}
 	}
-
-	printf("Answer: %s\n", *answer); fflush(stdout);
+	
+	//printf("Answer: %s\n", *answer); fflush(stdout);
 	
 	strcat(message, "(");
-	strcat(message, *answer);
+	strncat(message, *answer, (wordSize*2));	// Keep in account a lack of null termination characters //
 	strcat(message, ")");
 }
 
 void
 buildLingoPage(struct Lingo * lingo, char * message)
 {
+	lingo->mutex_free = false;
 	if(!lingo->isRunning)
 	{
 		for(int i = 0; i < lingo->numberOfGuesses; ++i)

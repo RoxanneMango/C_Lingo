@@ -1,8 +1,8 @@
 #ifndef LINGO_H
 #define LINGO_H
 
-#include "server.h"
 #include "param.h"
+#include "high_scores.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -27,6 +27,9 @@
 *								 *
 * * * * * * * * * * * * * * * * */
 
+#define GUESS_TIME 15
+#define NAME_TIME 60
+
 typedef struct Lingo
 {
 	char * word;
@@ -35,6 +38,10 @@ typedef struct Lingo
 	int guessesRemaining;
 	bool isRunning;
 	
+	bool isLost;
+	int lostCountDown;
+	
+	char * name;
 	int score;
 	bool isWon;
 	bool killSignal;
@@ -54,8 +61,6 @@ typedef struct Lingo
 	bool mutex_free;
 	
 	bool isWonAck;
-	
-	int connfd;
 	
 } Lingo;
 

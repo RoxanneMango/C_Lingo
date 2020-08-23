@@ -39,11 +39,17 @@ is_letter(char letter)
 }
 
 bool
+is_number(char letter)
+{
+	return ( ( (letter < STR_ZERO) || (letter > STR_NINE) ) ? false : true );
+}
+
+bool
 isValid(char * word, int size)
 {
 	for(int i = 0; i < size; ++i)
 	{
-		if(!is_letter(word[i]))
+		if(!is_letter(word[i]) && (word[i] != UNDER_SCORE) && !is_number(word[i]))
 		{
 			return false;
 		}
@@ -85,7 +91,7 @@ get_key_and_value(char * recvline, Param * param)
 				break;
 			}
 			
-			if(!is_letter(recvline[i]))
+			if(!is_letter(recvline[i]) && !is_number(recvline[i]) && (recvline[i] != UNDER_SCORE))
 			{
 				memset(param->value, 0, 15);
 				return -1;

@@ -37,6 +37,7 @@ main(int argc, char ** argv)
 		.value = calloc(15, sizeof(char))
 	};
 	
+	/* Just a smol brain single threaded server */
 	for(;;)
 	{
 		/* reset buffers */
@@ -44,15 +45,15 @@ main(int argc, char ** argv)
 		memset(buff, 0, MAXLINE);
 		memset(message, 0, MAXLINE);
 		
+		/* Waiting for connection */
 		//printf("\nWaiting for connection\n"); fflush(stdout);
 		connect_client(&connfd, &listenfd, addr, recvline, client_address);
-		lingo.connfd = connfd;
 		
 		switch(checkRequestType((char *)recvline))
 		{
 			case GET:
 			{
-				//printRequestFirstLine((char *)recvline); printf("\n"); fflush(stdout);
+				printRequestFirstLine((char *)recvline); printf("\n"); fflush(stdout);
 				getPage((char *)recvline, message);
 				getLingoVariable((char *)recvline, &lingo, message);
 				break;
@@ -70,7 +71,7 @@ main(int argc, char ** argv)
 			}
 			default:
 			{
-				err_n_die("Package type error.");
+				printf("Package type error.\n");
 				break;
 			}
 		}

@@ -121,7 +121,7 @@ a {
 		window.addEventListener('load', () => init());
 		function init(){
 			let register = document.querySelector("#lingo");
-			register.addEventListener("submit", (event) => submitForm(event));
+			register.addEventListener("submit", submitForm, true);
 			lingo_init();
 			interval = window.setInterval(timer, 1000);}
 	</script>
