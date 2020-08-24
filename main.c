@@ -23,8 +23,8 @@ main(int argc, char ** argv)
 	
 	create_socket(&listenfd, servaddr, ip_address, server_port);
 	
-	uint8_t buff[MAXLINE];
 	uint8_t recvline[MAXLINE];
+	char buff[MAXLINE];
 	char * message = calloc(MAXLINE, sizeof(char));
 	
 	int connfd;
@@ -79,6 +79,6 @@ main(int argc, char ** argv)
 		write_socket(connfd, (char *)buff);
 		close(connfd);
 	}
-	free(message);	
+	free(message);
 	return 0;
 }

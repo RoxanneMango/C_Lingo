@@ -36,35 +36,38 @@
 
 typedef struct Lingo
 {
-	char * word;
+	/* Array indexes and bounds */
+	int index;
+	int hintSize;
 	int wordSize;
 	int numberOfGuesses;
 	int guessesRemaining;
-	bool isRunning;
-	
-	bool isLost;
-	int lostCountDown;
-	
-	char * name;
+
+	/* Lingo game stats */
+	char * word;
+	char * hints;
+	char ** guesses;
+	//
 	int score;
+	char * name;
+	
+	/* flags */
+	bool guessed;
+	bool isRunning;
+	bool isLost;
 	bool isWon;
+	bool isWonAck;
 	bool killSignal;
 	
-	char ** guesses;
-	int index;
-	bool guessed;
-	
-	int hintSize;
-	char * hints;
-	
+	/* Time */
 	time_t startTime;
 	time_t endTime;
 	int guessTime;
+	int lostCountDown;
 	
+	/* threads */
 	pthread_t thread;
 	bool mutex_free;
-	
-	bool isWonAck;
 	
 } Lingo;
 
