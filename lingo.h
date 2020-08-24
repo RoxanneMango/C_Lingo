@@ -85,22 +85,3 @@ void buildLetterFlags(char * guess, char * word, int wordSize, char * message);
 void buildLingoPage(struct Lingo * lingo, char * message);
 
 #endif // LINGO_H
-
-
-/* * * * * * * * * * * * * * * * * * * * * * * * 
-* 
-* A. Player chooses how many lettered word to guess
-* 0. Lingo chooses random word from word list
-* a. Game starts, timer starts counting down. Both client and server sided.
-* 1. Get send word by client
-* 2. Sanitize string to retrieve word
-* 3. pass word to word builder
-* 4. wordBuilder passes word to letterBuilder, letter by letter.
-* 5. wordBuilder returns formatted HTML code to be inserted into the lingo_word div
-* 6. if timer runs out before guess is made, turn is skipped.
-* 7. if guess is made, timer resets.
-* 
-* 
-* 
-* 
-* * * * * * * * * * * * * * * * * * * * * * * */

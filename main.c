@@ -1,14 +1,6 @@
 #include "server.h"
 #include "lingo.h"
 
-// TESTS:
-/*
-1. Check for buffer overflows: When receiving and sending data, and when reading in files!
-	Increment counter when FP++ ; if (counter > MAXLINE) { err_n_die("Buffer overflow"); }
-2. Check whether the files you try to open actually exist.
-
-*/
-
 int
 main(int argc, char ** argv)
 {
