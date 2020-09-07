@@ -14,6 +14,7 @@ $(OBJECTS): %.o: %.c
 
 clean:
 	@rm *.o
+	@rm $(EXEC)
 
 run:
 	@./$(EXEC)

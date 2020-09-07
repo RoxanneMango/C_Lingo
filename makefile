@@ -13,6 +13,7 @@ $(OBJECTS): %.o: %.c
 	$(CC) -c $(CFLAGS) $< -o $@
 clean:
 	@rm *.o
+	@rm $(EXEC)
 
 run:
 	@./$(EXEC)
