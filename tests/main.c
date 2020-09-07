@@ -1,17 +1,12 @@
 #include "net_test.h"
+#include "file_Test.h"
 
 int
 main(int argc, char ** argv)
 {
 	net_test();
-	
-//	printf("\nPress ENTER to continue . . . ");
-//	getchar();
+	printf("\n");
+	file_test();
 	
 	return 0;
 }
-
-// Github actions
-// file_test()
-// git clone CPSE1
-// Ukelele practice 

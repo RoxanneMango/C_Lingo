@@ -13,8 +13,4 @@
 #include "../server.h"
 #include "../lingo.h"
 
-bool mem_test();
-bool type_test();
-bool file_test();
-
 #endif // TEST_H

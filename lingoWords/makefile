@@ -4,13 +4,15 @@ CFLAGS = -Wall -static
 OBJECTS = lingo_words.o
 EXEC = main
 
-.PHONY: all clean
+.PHONY: all clean run
 
 all: $(OBJECTS)
 	$(CC) -o $(EXEC) main.c $(OBJECTS) $(CFLAGS)
-	@./$(EXEC)
 
 $(OBJECTS): %.o: %.c
 	$(CC) -c $(CFLAGS) $< -o $@
 clean:
 	@rm *.o
+
+run:
+	@./$(EXEC)
