@@ -70,8 +70,6 @@ lingo_start(struct Lingo * lingo)
 	lingo->hintSize = 1;
 	lingo->hints = calloc(lingo->wordSize, sizeof(char));
 	
-	//printf("Random word: %s\n", lingo->word);
-	
 	/* Allocating the guesses */
 	lingo->guesses = (char **) calloc(lingo->numberOfGuesses, sizeof(char *));
 	for(int i = 0; i < lingo->numberOfGuesses; ++i)
