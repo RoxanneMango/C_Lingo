@@ -17,5 +17,6 @@ jobs:
       run: make -C ./lingoWords
     - name: make tests
       run: make -C ./tests
+      run: make run -C ./tests
     - name: make c_lingo
       run: make
