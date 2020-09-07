@@ -4,5 +4,14 @@ int
 main(int argc, char ** argv)
 {
 	net_test();
-	printf("assert result: %d\n", TEST_IS_EQUAL(1,2));
+	
+	printf("\nPress ENTER to continue . . . ");
+	getchar();
+	
+	return 0;
 }
+
+// Github actions
+// file_test()
+// git clone CPSE1
+// Ukelele practice 
