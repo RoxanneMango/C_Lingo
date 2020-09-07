@@ -7,8 +7,7 @@ create_socket(int * listenfd, struct sockaddr_in servaddr, char * ip_address, in
 	{
 		err_n_die("Socket error.");
 	}
-	
-	bzero(&servaddr, sizeof(servaddr));
+	memset(&servaddr, 0, sizeof(struct sockaddr_in));
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_addr.s_addr = inet_addr(ip_address);
 	servaddr.sin_port = htons(server_port);
@@ -19,6 +18,7 @@ create_socket(int * listenfd, struct sockaddr_in servaddr, char * ip_address, in
 		ip_address = LOCALHOST;
 		server_port += 1;
 		servaddr.sin_port = htons(server_port);
+		
 		if( (bind(*listenfd, (struct sockaddr *) &servaddr, sizeof(servaddr))) < 0 )
 		{
 			err_n_die("Bind error.");
