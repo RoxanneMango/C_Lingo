@@ -5,8 +5,8 @@ main(int argc, char ** argv)
 {
 	net_test();
 	
-	printf("\nPress ENTER to continue . . . ");
-	getchar();
+//	printf("\nPress ENTER to continue . . . ");
+//	getchar();
 	
 	return 0;
 }

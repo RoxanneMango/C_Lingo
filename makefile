@@ -4,7 +4,7 @@ CFLAGS = -Wall -static -pthread -g -O0
 OBJECTS = number_system_conversion.o error_handling.o file_io.o page_requests.o param.o lingo.o server.o high_scores.o
 EXEC = main
 
-.PHONY: all clean run
+.PHONY: all clean run test
 
 all: $(OBJECTS)
 	$(CC) -o $(EXEC) main.c $(OBJECTS) $(CFLAGS)
@@ -16,3 +16,7 @@ clean:
 
 run:
 	@./$(EXEC)
+
+test:
+	@make -C tests
+	@make run -C tests

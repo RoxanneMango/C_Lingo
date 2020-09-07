@@ -54,7 +54,7 @@ net_test()
 	printf("\033[1;30m> listen on socket:\t %s\n", listen_test(&listenfd) ? ++passed_tests, "\033[1;32mSUCCESSFUL" : "\033[1;31mFAILED");
 
 	// NUM_OF_PASSED_TESTS
-	printf("\033[1;30m\nNumber of passed tests:\t %s%d/%d\033[1;30m\n", (passed_tests == number_of_tests ? "\033[1;32m" : "\033[1;31m"), passed_tests, number_of_tests);
+	printf("\033[1;30m\nNumber of passed tests:\t %s%d/%d\n\033[0m", (passed_tests == number_of_tests ? "\033[1;32m" : "\033[1;31m"), passed_tests, number_of_tests);
 	
 	return (passed_tests == number_of_tests);
 }
