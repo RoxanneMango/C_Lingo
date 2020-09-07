@@ -2,6 +2,8 @@
 #define NET_TEST_H
 
 #include "tests.h"
+#include "../server.h"
+#include "../lingo.h"
 
 bool net_test();
 
