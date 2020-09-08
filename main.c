@@ -71,6 +71,8 @@ main(int argc, char ** argv)
 		write_socket(connfd, (char *)buff);
 		close(connfd);
 	}
+	free(param.key);
+	free(param.value);
 	free(message);
 	return 0;
 }

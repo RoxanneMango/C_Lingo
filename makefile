@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -static -pthread -g -O0
 
-OBJECTS = number_system_conversion.o error_handling.o file_io.o page_requests.o param.o lingo.o server.o high_scores.o
+OBJECTS = error_handling.o file_io.o page_requests.o param.o lingo.o server.o high_scores.o
 EXEC = main
 
 .PHONY: all clean run

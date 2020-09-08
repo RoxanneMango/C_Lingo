@@ -50,7 +50,7 @@ lingo_start(struct Lingo * lingo)
 	
 	lingo->isLost = false;
 	lingo->lostCountDown = NAME_TIME;
-	lingo->name = calloc(16, sizeof(char));
+	lingo->name = (char *) calloc(16, sizeof(char));
 	for(int i = 0; i < 16; ++i)
 	{
 		lingo->name[i] = '.';
@@ -64,11 +64,11 @@ lingo_start(struct Lingo * lingo)
 	
 	lingo->wordSize = 5;
 	
-	lingo->word = calloc(lingo->wordSize, sizeof(char));
+	lingo->word = (char *) calloc(lingo->wordSize, sizeof(char));
 	getRandomWord(lingo->word, lingo->wordSize, FIVE_LETTER_WORD_FILE);
 	
 	lingo->hintSize = 1;
-	lingo->hints = calloc(lingo->wordSize, sizeof(char));
+	lingo->hints = (char *) calloc(lingo->wordSize, sizeof(char));
 	
 	/* Allocating the guesses */
 	lingo->guesses = (char **) calloc(lingo->numberOfGuesses, sizeof(char *));
@@ -118,7 +118,7 @@ lingo_restart(struct Lingo * lingo)
 		lingo->wordSize = 5;
 	}
 	
-	lingo->word = realloc(lingo->word, lingo->wordSize * sizeof(char));
+	lingo->word = (char *) realloc(lingo->word, lingo->wordSize * sizeof(char));
 
 	switch(lingo->wordSize)
 	{
@@ -140,7 +140,7 @@ lingo_restart(struct Lingo * lingo)
 	}
 	
 	lingo->hintSize = 1;
-	lingo->hints = realloc(lingo->hints, lingo->wordSize * sizeof(char));
+	lingo->hints = (char *) realloc(lingo->hints, lingo->wordSize * sizeof(char));
 	
 	//printf("Random word: %s\n", lingo->word);
 	
