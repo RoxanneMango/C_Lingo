@@ -5,7 +5,7 @@
 #include "../server.h"
 #include "../lingo.h"
 
-bool net_test();
+bool net_test(bool is_remote);
 
 bool socket_test(int * listenfd);
 bool bind_test(int * listenfd, struct sockaddr_in servaddr);

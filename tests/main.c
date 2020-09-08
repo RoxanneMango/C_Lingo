@@ -5,10 +5,19 @@
 int
 main(int argc, char ** argv)
 {
+	bool is_remote = false;
+	if(argc > 1)
+	{
+		if(!strcmp(argv[1], "--local"))
+		{
+			is_remote = true;
+		}
+	}
+	
 	int number_of_suites = 3;
 	int suites_passed = 0;
-	
-	net_test() ? ++suites_passed : 0;
+
+	net_test(is_remote) ? ++suites_passed : 0;
 	printf("\n");
 	file_test() ? ++suites_passed : 0;
 	printf("\n");

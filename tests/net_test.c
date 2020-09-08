@@ -1,9 +1,9 @@
 #include "net_test.h"
 
 bool
-net_test()
+net_test(bool is_remote)
 {
-	int number_of_tests = 12;
+	int number_of_tests = is_remote ? 6 : 12;
 	int passed_tests = 0;
 
 	printf("\033[1;30m-- Starting networking test suite --\n\n");
@@ -33,29 +33,32 @@ net_test()
 	
 	listenfd = socket(AF_INET, SOCK_STREAM, 0);
 	
-	memset(&servaddr, 0, sizeof(struct sockaddr_in));
-	servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = inet_addr(SERVER_IP);
-	servaddr.sin_port = htons(SERVER_PORT);
-	
-	printf("\n\033[1;30m- PUBLIC:\n");
+	if(!is_remote)
+	{
+		memset(&servaddr, 0, sizeof(struct sockaddr_in));
+		servaddr.sin_family = AF_INET;
+		servaddr.sin_addr.s_addr = inet_addr(SERVER_IP);
+		servaddr.sin_port = htons(SERVER_PORT);
+		
+		printf("\n\033[1;30m- PUBLIC:\n");
 
-	// INIT_SOCKET
-	printf("\033[1;30m> initializing socket:\t %s\n", socket_test(&listenfd) ? ++passed_tests, "\033[1;32mSUCCESSFUL" : "\033[1;31mFAILED");
-	// SIN_FAMILY
-	printf("\033[1;30m> setting sin_family:\t %s\n", sin_family_test(servaddr, AF_INET) ? ++passed_tests, "\033[1;32mSUCCESSFUL" : "\033[1;31mFAILED");
-	// SIN_IP
-	printf("\033[1;30m> setting sin_addr:\t %s\n", sin_addr_test(servaddr, SERVER_IP) ? ++passed_tests, "\033[1;32mSUCCESSFUL" : "\033[1;31mFAILED");
-	// SIN_PORT
-	printf("\033[1;30m> setting sin_port:\t %s\n", sin_port_test(servaddr, SERVER_PORT) ? ++passed_tests, "\033[1;32mSUCCESSFUL" : "\033[1;31mFAILED");
-	// BIND_SOCKET	
-	printf("\033[1;30m> binding socket:\t %s\n", bind_test(&listenfd, servaddr) ? ++passed_tests, "\033[1;32mSUCCESSFUL" : "\033[1;31mFAILED");
-	// LISTEN_SOCKET
-	printf("\033[1;30m> listen on socket:\t %s\n", listen_test(&listenfd) ? ++passed_tests, "\033[1;32mSUCCESSFUL" : "\033[1;31mFAILED");
+		// INIT_SOCKET
+		printf("\033[1;30m> initializing socket:\t %s\n", socket_test(&listenfd) ? ++passed_tests, "\033[1;32mSUCCESSFUL" : "\033[1;31mFAILED");
+		// SIN_FAMILY
+		printf("\033[1;30m> setting sin_family:\t %s\n", sin_family_test(servaddr, AF_INET) ? ++passed_tests, "\033[1;32mSUCCESSFUL" : "\033[1;31mFAILED");
+		// SIN_IP
+		printf("\033[1;30m> setting sin_addr:\t %s\n", sin_addr_test(servaddr, SERVER_IP) ? ++passed_tests, "\033[1;32mSUCCESSFUL" : "\033[1;31mFAILED");
+		// SIN_PORT
+		printf("\033[1;30m> setting sin_port:\t %s\n", sin_port_test(servaddr, SERVER_PORT) ? ++passed_tests, "\033[1;32mSUCCESSFUL" : "\033[1;31mFAILED");
+		// BIND_SOCKET	
+		printf("\033[1;30m> binding socket:\t %s\n", bind_test(&listenfd, servaddr) ? ++passed_tests, "\033[1;32mSUCCESSFUL" : "\033[1;31mFAILED");
+		// LISTEN_SOCKET
+		printf("\033[1;30m> listen on socket:\t %s\n", listen_test(&listenfd) ? ++passed_tests, "\033[1;32mSUCCESSFUL" : "\033[1;31mFAILED");
+	}	
 
 	// NUM_OF_PASSED_TESTS
 	printf("\033[1;30m\nNumber of passed tests:\t %s%d/%d\n\033[0m", (passed_tests == number_of_tests ? "\033[1;32m" : "\033[1;31m"), passed_tests, number_of_tests);
-	
+
 	return (passed_tests == number_of_tests);
 }
 
