@@ -1,7 +1,6 @@
 #ifndef TESTS_H
 #define TESTS_H
 
-#include <assert.h>
 #include <stdbool.h>
 
 #define TEST_IS_ZERO(x) (x == 0)
