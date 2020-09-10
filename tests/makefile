@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -static -pthread -g -O0
 
-OBJECTS = tests.o net_test.o file_test.o mem_test.o fake_param.o fake_lingo.o test_double.o
+OBJECTS = tests.o net_test.o file_test.o mem_test.o
 EXEC = main
 
 .PHONY: all clean run
