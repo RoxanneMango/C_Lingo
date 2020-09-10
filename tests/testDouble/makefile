@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -static -pthread -g -O0
+CFLAGS = -Wall -static -g -O0
 
 OBJECTS = fake_param.o fake_lingo.o
 EXEC = main
