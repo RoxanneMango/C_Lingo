@@ -43,6 +43,7 @@ lingo_start(struct Lingo * lingo)
 	}
 	
 	lingo->isWon = false;
+	lingo->isWonAck = false;
 	lingo->isRunning = true;
 	lingo->killSignal = false;
 	
@@ -158,12 +159,10 @@ lingo_game(struct Lingo * lingo)
 			lingo->killSignal = true;
 		}
 	}
-
 	if(lingo->isWonAck)
 	{
 		lingo_restart(lingo);
-	}
-	
+	}	
 	if(lingo->killSignal)
 	{
 		lingo_stop(lingo);

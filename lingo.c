@@ -87,6 +87,7 @@ lingo_start(struct Lingo * lingo)
 	}
 	
 	lingo->isWon = false;
+	lingo->isWonAck = false;
 	lingo->isRunning = true;
 	lingo->killSignal = false;
 	

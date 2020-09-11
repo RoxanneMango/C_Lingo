@@ -49,7 +49,7 @@ isValid(char * word, int size)
 {
 	for(int i = 0; i < size; ++i)
 	{
-		if(!is_letter(word[i]) && (word[i] != UNDER_SCORE) && !is_number(word[i]))
+		if(!is_letter(word[i]) || (word[i] == UNDER_SCORE) || is_number(word[i]))
 		{
 			return false;
 		}
