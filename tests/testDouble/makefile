@@ -1,7 +1,7 @@
 CC = gcc
-CFLAGS = -Wall -static -g -O0
+CFLAGS = -Wall -static -O3
 
-OBJECTS = fake_param.o fake_lingo.o
+OBJECTS = fake_param.o fake_lingo.o lingo_test.o
 EXEC = main
 
 .PHONY: all clean run

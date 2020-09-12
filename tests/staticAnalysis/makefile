@@ -1,19 +1,13 @@
 CC = gcc
-CFLAGS = -Wall -static -g -O0
-
-OBJECTS = 
+CFLAGS = -Wall -static -O3 
 EXEC = main
 
 .PHONY: all clean run
 
 all: $(OBJECTS)
-	$(CC) -o $(EXEC) main.c $(OBJECTS) $(CFLAGS)
-
-$(OBJECTS): %.o: %.c
-	$(CC) -c $(CFLAGS) $< -o $@
+	$(CC) -o $(EXEC) main.c $(CFLAGS)
 
 clean:
-	@rm *.o
 	@rm $(EXEC)
 
 run:

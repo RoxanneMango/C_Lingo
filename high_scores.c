@@ -72,15 +72,6 @@ add_score(char * fileName, char * name, int score)
 			break;
 		}
 	}
-
-	for(int i = 0; i < 10; ++i)
-	{
-		for(int j = 0; j < 14; ++j)
-		{
-			printf("%c", names[i][j]);
-		}
-		printf(" : %d;\n", scores[i]);
-	}
 	
 	// Erase file for repopulation */
 	FP = fopen(fileName, "w");

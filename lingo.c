@@ -10,7 +10,7 @@ getRandomWord(char * word, int size, char * file_name)
 	
 	printf("random_number = %d\n", random_number); fflush(stdout);
 	
-	char random_word[7] = {0};
+	char random_word[8] = {0};
 
 	int i = 0;
 	char c[1] = {0};
@@ -198,7 +198,10 @@ lingo_game(void * void_lingo)
 		}
 		if((!lingo->guessesRemaining) || (time(0) >= lingo->endTime))
 		{
-			lingo->isLost = true;
+			if(!lingo->isWon)
+			{
+				lingo->isLost = true;
+			}
 		}
 		
 		if(lingo->isLost)

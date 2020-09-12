@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -static -pthread -g -O0
+CFLAGS = -Wall -static -pthread -O3
 
 OBJECTS = error_handling.o file_io.o page_requests.o param.o lingo.o server.o high_scores.o
 EXEC = main

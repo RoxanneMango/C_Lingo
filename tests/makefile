@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -static -g -O0
+CFLAGS = -Wall -static -O3
 
 OBJECTS = tests.o net_test.o file_test.o mem_test.o
 EXEC = main

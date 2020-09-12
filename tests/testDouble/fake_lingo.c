@@ -21,7 +21,7 @@ lingo_start(struct Lingo * lingo)
 	lingo->wordSize = 5;
 	
 	lingo->word = (char *) calloc(lingo->wordSize, sizeof(char));
-	strcpy(lingo->word, "lingo");
+	strncpy(lingo->word, "lingo", 5);
 
 	lingo->hintSize = 1;
 	lingo->hints = (char *) calloc(lingo->wordSize, sizeof(char));
@@ -149,7 +149,10 @@ lingo_game(struct Lingo * lingo)
 	}
 	if((!lingo->guessesRemaining) || (lingo->currentTime >= lingo->endTime))
 	{
-		lingo->isLost = true;
+		if(!lingo->isWon)
+		{
+			lingo->isLost = true;
+		}
 	}
 	
 	if(lingo->isLost)

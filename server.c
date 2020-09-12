@@ -51,5 +51,8 @@ connect_client(int * connfd, int * listenfd, struct sockaddr_in addr, uint8_t * 
 void
 write_socket(int connfd, char * buffer)
 {
-	write(connfd, (char *)buffer, strlen((char *)buffer));
+	if( write(connfd, (char *)buffer, strlen((char *)buffer)) < 0 )
+	{
+		err_n_die("Write error.");
+	}
 }
