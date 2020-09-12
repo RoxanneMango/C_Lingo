@@ -15,7 +15,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: make lingo_words
       run: make -C ./lingoWords
-    - make: make staticAnalysis
+    - name: make staticAnalysis
       run: cd ./tests/staticAnalysis && make && ./main && cd ../..
     - name: make tests
       run: cd ./tests && make && ./main --local && cd ..
